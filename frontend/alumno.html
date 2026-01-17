@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Alumno</title>
+</head>
+<body>
+
+  <h1>Bienvenido Alumno</h1>
+  <p id="info"></p>
+
+  <button onclick="cerrarSesion()">Cerrar sesión</button>
+
+  <script>
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+    if (!usuario) {
+      window.location.href = "login.html";
+    } else {
+      document.getElementById("info").innerText =
+        "Usuario: " + usuario.nombre + " | Cédula: " + usuario.cedula;
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem("usuario");
+      window.location.href = "login.html";
+    }
+  </script>
+
+</body>
+</html>
