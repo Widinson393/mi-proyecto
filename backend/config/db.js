@@ -1,12 +1,11 @@
-// CONEXIÓN A POSTGRESQL (NO MONGODB)
-const { Pool } = require('pg')
+const { Pool } = require("pg");
 
 const pool = new Pool({
-  host: 'localhost',
+  user: "postgres",
+  host: "localhost",
+  database: "plataforma_examenes",
+  password: "1998",
   port: 5432,
-  user: 'postgres',        // 👈 TU USUARIO POSTGRES
-  password: '1998', // 👈 TU CONTRASEÑA POSTGRES
-  database: 'plataforma_examenes'
-})
+});
 
-module.exports = pool
+module.exports = pool;

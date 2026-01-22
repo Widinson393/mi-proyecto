@@ -5,18 +5,35 @@
   <title>Registro</title>
 </head>
 <body>
-
-  <h2>Registro de usuario</h2>
+  <h2>Registro de Usuario</h2>
 
   <input type="text" id="cedula" placeholder="Cédula"><br><br>
-  <input type="text" id="nombre" placeholder="Nombre"><br><br>
-  <input type="email" id="correo" placeholder="Correo"><br><br>
+  <input type="text" id="nombre" placeholder="Nombre completo"><br><br>
+  <input type="email" id="correo" placeholder="Correo electrónico"><br><br>
   <input type="password" id="password" placeholder="Contraseña"><br><br>
 
-  <button onclick="registrar()">Registrar</button>
+  <button onclick="registrar()">Registrarse</button>
 
-  <p id="respuesta"></p>
+  <p id="mensaje"></p>
 
-  <script src="main.js"></script>
+  <script>
+    async function registrar() {
+      const cedula = document.getElementById("cedula").value;
+      const nombre = document.getElementById("nombre").value;
+      const correo = document.getElementById("correo").value;
+      const password = document.getElementById("password").value;
+
+      const respuesta = await fetch("http://localhost:3000/api/auth/registro", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ cedula, nombre, correo, password })
+      });
+
+      const data = await respuesta.json();
+      document.getElementById("mensaje").innerText = data.mensaje;
+    }
+  </script>
 </body>
 </html>

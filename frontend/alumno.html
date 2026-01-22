@@ -2,30 +2,29 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Alumno</title>
+  <title>Panel Alumno</title>
 </head>
 <body>
+  <h2>Historial de exámenes</h2>
+<button onclick="cargarResultados()">Ver mis resultados</button>
+<ul id="lista-resultados"></ul>
 
-  <h1>Bienvenido Alumno</h1>
-  <p id="info"></p>
+<script>
+  function cargarResultados() {
+    const alumno_id = 1; // luego lo haremos dinámico
 
-  <button onclick="cerrarSesion()">Cerrar sesión</button>
-
-  <script>
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-
-    if (!usuario) {
-      window.location.href = "login.html";
-    } else {
-      document.getElementById("info").innerText =
-        "Usuario: " + usuario.nombre + " | Cédula: " + usuario.cedula;
-    }
-
-    function cerrarSesion() {
-      localStorage.removeItem("usuario");
-      window.location.href = "login.html";
-    }
-  </script>
-
+    fetch(`http://localhost:3000/api/alumno/resultados/${alumno_id}`)
+      .then(res => res.json())
+      .then(data => {
+        const lista = document.getElementById("lista-resultados");
+        lista.innerHTML = "";
+        data.forEach(r => {
+          const li = document.createElement("li");
+          li.textContent = `${r.titulo} → Nota: ${r.nota}/10 (${new Date(r.fecha).toLocaleString()})`;
+          lista.appendChild(li);
+        });
+      });
+  }
+</script>
 </body>
 </html>

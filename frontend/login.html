@@ -5,39 +5,45 @@
   <title>Login</title>
 </head>
 <body>
-
-  <h2>Iniciar Sesión</h2>
+  <h2>Inicio de Sesión</h2>
 
   <input type="text" id="cedula" placeholder="Cédula"><br><br>
   <input type="password" id="password" placeholder="Contraseña"><br><br>
 
-  <button onclick="login()">Entrar</button>
+  <button onclick="login()">Iniciar sesión</button>
 
   <p id="mensaje"></p>
-<script>
+
+  <script>
   async function login() {
     const cedula = document.getElementById("cedula").value;
     const password = document.getElementById("password").value;
 
-    const respuesta = await fetch("http://localhost:3000/api/auth/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ cedula, password })
-    });
+    try {
+      const respuesta = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ cedula, password })
+      });
 
-    const data = await respuesta.json();
-    document.getElementById("mensaje").innerText = data.mensaje;
-if (data.mensaje === "Login exitoso") {
-  localStorage.setItem("usuario", JSON.stringify(data.usuario));
+      const data = await respuesta.json();
+      document.getElementById("mensaje").innerText = data.mensaje;
 
-  if (data.usuario.rol === "admin") {
-    window.location.href = "admin.html";
-  } else {
-    window.location.href = "alumno.html";
-  }
-}
+      if (data.usuario) {
+        localStorage.setItem("usuario", JSON.stringify(data.usuario));
+
+        if (data.usuario.rol === "admin") {
+          window.location.href = "admin.html";
+        } else {
+          window.location.href = "alumno.html";
+        }
+      }
+
+    } catch (error) {
+      document.getElementById("mensaje").innerText = "Error al conectar con el servidor";
+    }
   }
 </script>
 </body>

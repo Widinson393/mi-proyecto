@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Exámenes disponibles</title>
+</head>
+<body>
+  <h1>Exámenes disponibles</h1>
+  <ul id="lista-examenes"></ul>
+
+  <div id="zona-examen"></div>
+
+  <script>
+    const API = "http://localhost:3000/api/alumno";
+
+    // Cargar exámenes
+    fetch(API + "/examenes")
+      .then(res => res.json())
+      .then(data => {
+        const lista = document.getElementById("lista-examenes");
+        data.forEach(examen => {
+          const li = document.createElement("li");
+          li.innerHTML = `
+            <strong>${examen.titulo}</strong> - ${examen.descripcion}
+            <button onclick="abrirExamen(${examen.id})">Abrir</button>
+          `;
+          lista.appendChild(li);
+        });
+      });
+
+    // Abrir examen
+    function abrirExamen(id) {
+      fetch(API + "/examenes/" + id)
+        .then(res => res.json())
+        .then(preguntas => {
+          const zona = document.getElementById("zona-examen");
+          let html = `<h2>Examen</h2><form id="form-examen">`;
+
+          preguntas.forEach((p, index) => {
+            html += `
+              <p><strong>${index + 1}. ${p.texto}</strong></p>
+              <label><input type="radio" name="p${p.id}" value="a"> ${p.opcion_a}</label><br>
+              <label><input type="radio" name="p${p.id}" value="b"> ${p.opcion_b}</label><br>
+              <label><input type="radio" name="p${p.id}" value="c"> ${p.opcion_c}</label><br>
+              <label><input type="radio" name="p${p.id}" value="d"> ${p.opcion_d}</label><br><br>
+            `;
+          });
+
+          html += `
+            <input type="hidden" id="examen_id" value="${id}">
+            <button type="submit">Enviar examen</button>
+          </form>
+          <p id="resultado"></p>
+          `;
+
+          zona.innerHTML = html;
+
+          document.getElementById("form-examen").addEventListener("submit", enviarExamen);
+        });
+    }
+
+    // Enviar respuestas
+    function enviarExamen(e) {
+      e.preventDefault();
+
+      const examen_id = document.getElementById("examen_id").value;
+      const alumno_id = 1; // ⚠️ luego lo hacemos dinámico
+
+      const form = e.target;
+      const respuestas = [];
+
+      const radios = form.querySelectorAll("input[type=radio]:checked");
+      radios.forEach(radio => {
+        const pregunta_id = radio.name.substring(1);
+        respuestas.push({
+          pregunta_id: pregunta_id,
+          respuesta: radio.value
+        });
+      });
+
+      fetch(API + `/examenes/${examen_id}/responder`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ alumno_id, respuestas })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("resultado").innerText = "Resultado: " + data.nota + "/10";
+      });
+    }
+  </script>
+</body>
+</html>

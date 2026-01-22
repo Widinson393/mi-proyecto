@@ -2,14 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Admin</title>
+  <title>Panel Admin</title>
 </head>
 <body>
-
-  <h1>Panel de Administración</h1>
-  <p id="info"></p>
-
-  <button onclick="cerrarSesion()">Cerrar sesión</button>
+  <h2>Panel de Administrador</h2>
+  <p id="bienvenida"></p>
 
   <script>
     const usuario = JSON.parse(localStorage.getItem("usuario"));
@@ -17,15 +14,9 @@
     if (!usuario || usuario.rol !== "admin") {
       window.location.href = "login.html";
     } else {
-      document.getElementById("info").innerText =
-        "Admin: " + usuario.nombre;
-    }
-
-    function cerrarSesion() {
-      localStorage.removeItem("usuario");
-      window.location.href = "login.html";
+      document.getElementById("bienvenida").innerText =
+        "Bienvenido, " + usuario.nombre + " (Admin)";
     }
   </script>
-
 </body>
 </html>
