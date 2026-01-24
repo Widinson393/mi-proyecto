@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Mis Resultados</title>
+</head>
+<body>
+  <h1>Mis Resultados</h1>
+  <ul id="lista"></ul>
+
+  <script>
+    const token = localStorage.getItem("token");
+    const alumno = JSON.parse(localStorage.getItem("alumno"));
+
+    if (!token || !alumno) {
+      window.location.href = "login.html";
+    }
+
+    fetch(`http://localhost:3000/api/alumno/resultados/${alumno.id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        const lista = document.getElementById("lista");
+
+        if (data.length === 0) {
+          lista.innerHTML = "<li>No tienes resultados aún</li>";
+          return;
+        }
+
+        data.forEach(r => {
+          const li = document.createElement("li");
+          li.textContent = `Examen ${r.examen_id} - Nota: ${r.nota}`;
+          lista.appendChild(li);
+        });
+      })
+      .catch(err => console.error("Error frontend:", err));
+  </script>
+</body>
+</html>
